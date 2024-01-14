@@ -1,31 +1,36 @@
 package com.ixidev.home
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.ixidev.domain.AppNavigator
+import com.ixidev.home.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class HomeFragment : Fragment() {
+@AndroidEntryPoint
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    companion object {
-        fun newInstance() = HomeFragment()
+    private val viewModel: HomeViewModel by viewModels()
+
+    @Inject
+    lateinit var navigator: AppNavigator
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        val binding = FragmentHomeBinding.bind(view)
+
+        binding.featureOne.setOnClickListener {
+            navigator.goToFeatureOne()
+        }
+
+        binding.featureTwo.setOnClickListener {
+            navigator.goToFeatureTwo("Abdelmajid")
+        }
+
     }
-
-    private lateinit var viewModel: HomeViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

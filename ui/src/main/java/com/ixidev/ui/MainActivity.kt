@@ -1,11 +1,30 @@
-package com.ixidev.example
+package com.ixidev.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.ixidev.ui.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val navController: NavController by lazy {
+        findNavController(R.id.nav_host)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater, null, false)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+
+        binding.toolbar
+            .setupWithNavController(navController)
+
     }
 }

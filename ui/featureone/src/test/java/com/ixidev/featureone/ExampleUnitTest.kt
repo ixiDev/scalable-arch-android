@@ -1,4 +1,4 @@
-package com.ixidev.feature1
+package com.ixidev.featureone
 
 import org.junit.Test
 

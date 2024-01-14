@@ -1,4 +1,4 @@
-package com.ixidev.feature1
+package com.ixidev.featureone
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

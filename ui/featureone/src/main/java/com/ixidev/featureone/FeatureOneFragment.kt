@@ -1,31 +1,57 @@
 package com.ixidev.featureone
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.ixidev.domain.UiState
+import com.ixidev.domain.models.FeatureOneData
+import com.ixidev.featureone.databinding.FragmentFeatureOneBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class FeatureOneFragment : Fragment() {
+@AndroidEntryPoint
+class FeatureOneFragment : Fragment(R.layout.fragment_feature_one) {
 
-    companion object {
-        fun newInstance() = FeatureOneFragment()
+
+    private val viewModel: FeatureOneViewModel by viewModels()
+
+    private lateinit var binding: FragmentFeatureOneBinding
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding = FragmentFeatureOneBinding.bind(view)
+
+        lifecycleScope.launch {
+            viewModel.dataState.flowWithLifecycle(lifecycle)
+                .collectLatest {
+                    onUiStateChange(it)
+                }
+        }
     }
 
-    private lateinit var viewModel: FeatureOneViewModel
+    private fun onUiStateChange(state: UiState<FeatureOneData>) {
+        when (state) {
+            is UiState.Error -> {
+                // TODO: show error
+            }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_feature_one, container, false)
-    }
+            UiState.Loading -> {
+                binding.progressBar.isVisible = true
+                binding.tv.isVisible = false
+            }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FeatureOneViewModel::class.java)
-        // TODO: Use the ViewModel
+            is UiState.Success -> {
+                binding.progressBar.isVisible = false
+                binding.tv.isVisible = true
+                binding.tv.text = state.data?.text
+            }
+        }
     }
 
 }
